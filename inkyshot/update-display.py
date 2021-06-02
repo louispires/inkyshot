@@ -353,9 +353,9 @@ elif target_display == 'quote':
         except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
             logging.error(err)
             FONT_SIZE = 25
-            message = os.environ['QODTODAY'] if 'QODTODAY' in os.environ else message = "Sorry folks, today's quote has gone walkies :("
+            message = os.environ['QODTODAY'] if 'QODTODAY' in os.environ else "Sorry folks, today's quote has gone walkies :("
     else:
-        message = os.environ['QODTODAY'] if 'QODTODAY' in os.environ else message = "Sorry folks, today's quote has gone walkies :("
+        message = os.environ['QODTODAY'] if 'QODTODAY' in os.environ else "Sorry folks, today's quote has gone walkies :("
 
     logging.info("Message: %s", message)
     # Work out what size font is required to fit this message on the display
