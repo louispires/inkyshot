@@ -339,7 +339,7 @@ elif target_display == 'quote':
     logging.info("Day of Year: %s", DOJ)
     # Use a dashboard defined message if we have one, otherwise load a nice quote
     message = os.environ['INKY_MESSAGE'] if 'INKY_MESSAGE' in os.environ else None
-    if (message is None OR message == "") AND (not 'DOJ' in os.environ OR os.environ['DOJ'] != DOJ):
+    if (message is None or message == "") and (not 'DOJ' in os.environ or os.environ['DOJ'] != DOJ):
         try:
             response = requests.get(
                 f"https://quotes.rest/qod?category={CATEGORY}&language={LANGUAGE}",
