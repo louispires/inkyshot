@@ -21,8 +21,8 @@ assets:
       url: 'https://raw.githubusercontent.com/balenalabs/inkyshot/master/logo.png'
 data:
   applicationEnvironmentVariables:
-    - ALTERNATE_FREQUENCY: 60
-    - FONT: Grand9KPixel
+    - ALTERNATE_FREQUENCY: 30
+    - FONT: SourceSansPro
     - FONT_SIZE: 
     - MODE: alternate
     - QOD_CATEGORY: inspire

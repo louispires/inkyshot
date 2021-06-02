@@ -337,11 +337,6 @@ elif target_display == 'quote':
     # get day of year to ensure we retreiving quote only once per day
     DOJ = datetime.datetime.now().strftime("%j")
     logging.info("Day of Year: %s", DOJ)
-    logging.info("QODTODAY: %s", os.environ['QODTODAY'])
-    logging.info("QODTODAY: %s", 'QODTODAY' in os.environ)
-    logging.info("DOJ: %s", os.environ['DOJ'])
-    logging.info("DOJ: %s", 'DOJ' in os.environ)
-
     # Use a dashboard defined message if we have one, otherwise load a nice quote
     message = os.environ['INKY_MESSAGE'] if 'INKY_MESSAGE' in os.environ else None
     if (message is None or message == "") and (not 'DOJ' in os.environ or os.environ['DOJ'] != DOJ):
@@ -358,8 +353,6 @@ elif target_display == 'quote':
         except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
             logging.error(err)
             FONT_SIZE = 25
-            logging.info("QODTODAY: %s", os.environ['QODTODAY'])
-            logging.info("QODTODAY: %s", 'QODTODAY' in os.environ)
             message = os.environ['QODTODAY'] if 'QODTODAY' in os.environ else "Sorry folks, today's quote has gone walkies :("
     else:
         message = os.environ['QODTODAY'] if 'QODTODAY' in os.environ else "Sorry folks, today's quote has gone walkies :("
@@ -419,6 +412,7 @@ if "ROTATE" in os.environ:
 
 if "WAVESHARE" in os.environ:
     # epd does not have a set_image method.
+    logging.info("IMG: %s", img)
     display.display(display.getbuffer(img))
 else:
     display.set_image(img)
