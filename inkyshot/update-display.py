@@ -8,7 +8,6 @@ import sys
 import textwrap
 import time
 
-from PIL import Image, ImageFont, ImageDraw
 from font_amatic_sc import AmaticSC
 from font_caladea import Caladea
 from font_fredoka_one import FredokaOne
@@ -17,6 +16,7 @@ from font_intuitive import Intuitive
 from font_roboto import Roboto
 from font_source_sans_pro import SourceSansPro
 from font_source_serif_pro import SourceSerifPro
+from PIL import Image, ImageFont, ImageDraw
 import arrow
 import geocoder
 import requests
@@ -297,7 +297,6 @@ else:
     WHITE = display.WHITE
     img = Image.new("P", (WIDTH, HEIGHT))
 
-
 draw = ImageDraw.Draw(img)
 
 logging.info("Display dimensions: W %s x H %s", WIDTH, HEIGHT)
@@ -407,8 +406,6 @@ if "ROTATE" in os.environ:
 
 if "WAVESHARE" in os.environ:
     # epd does not have a set_image method.
-    logging.info("drawing WAVESHARE")
-    logging.info(img)
     display.display(display.getbuffer(img))
 else:
     display.set_image(img)
