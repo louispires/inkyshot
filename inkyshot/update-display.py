@@ -285,7 +285,7 @@ if "WAVESHARE" in os.environ:
     HEIGHT = display.width # yes, width
     BLACK = "black"
     WHITE = "white"
-    img = Image.new('1', (WIDTH, HEIGHT), 255)
+    img = Image.new('1', (lib.epd2in13_V2.EPD_WIDTH, lib.epd2in13_V2.EPD_HEIGHT), 255)
 else:
     import inky
     display = inky.auto()
@@ -406,6 +406,7 @@ if "ROTATE" in os.environ:
 
 if "WAVESHARE" in os.environ:
     # epd does not have a set_image method.
+    logging.info("drawing WAVESHARE")
     display.display(display.getbuffer(img))
 else:
     display.set_image(img)

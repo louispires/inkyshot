@@ -21,14 +21,18 @@ assets:
       url: 'https://raw.githubusercontent.com/balenalabs/inkyshot/master/logo.png'
 data:
   applicationEnvironmentVariables:
-    - UPDATE_HOUR: 9
-    - TZ: Europe/London
-    - QOD_CATEGORY: inspire
+    - ALTERNATE_FREQUENCY: 60
     - FONT: AmaticSC
+    - MODE: alternate
+    - QOD_CATEGORY: inspire
     - TEST_CHARACTER: a
+    - TZ: Africa/Johannesburg
+    - UPDATE_HOUR: 6
+    - WAVESHARE: 1
+    - WEATHER_LOCATION: 
   defaultDeviceType: raspberry-pi
   supportedDeviceTypes:
     - raspberry-pi
     - raspberrypi3
     - fincm3
-version: 1.3.6
+version: 1.3.7
