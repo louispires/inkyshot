@@ -8,15 +8,16 @@ import sys
 import textwrap
 import time
 
-from font_amatic_sc import AmaticSC
-from font_caladea import Caladea
-from font_fredoka_one import FredokaOne
-from font_hanken_grotesk import HankenGrotesk
-from font_intuitive import Intuitive
-from font_roboto import Roboto
-from font_source_sans_pro import SourceSansPro
-from font_source_serif_pro import SourceSerifPro
-from PIL import Image, ImageFont, ImageDraw
+from PIL import ImageFont
+from fonts.ttf import AmaticSC
+from fonts.ttf import Caladea
+from fonts.ttf import FredokaOne
+from fonts.ttf import HankenGrotesk
+from fonts.ttf import Intuitive
+from fonts.ttf import Roboto
+from fonts.ttf import SourceSansPro
+from fonts.ttf import SourceSerifPro
+from PIL import Image, ImageDraw
 import arrow
 import geocoder
 import requests
