@@ -412,7 +412,6 @@ if "ROTATE" in os.environ:
 
 if "WAVESHARE" in os.environ:
     # epd does not have a set_image method.
-    logging.info("IMG: %s", img)
     display.display(display.getbuffer(img))
 else:
     display.set_image(img)
