@@ -23,6 +23,7 @@ data:
   applicationEnvironmentVariables:
     - ALTERNATE_FREQUENCY: 60
     - FONT: Grand9KPixel
+    - FONT_SIZE: 
     - MODE: alternate
     - QOD_CATEGORY: inspire
     - TEST_CHARACTER: a
@@ -35,4 +36,4 @@ data:
     - raspberry-pi
     - raspberrypi3
     - fincm3
-version: 1.3.9
+version: 1.3.10
