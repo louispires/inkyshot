@@ -345,8 +345,9 @@ elif target_display == 'quote':
                 headers={"Accept" : "application/json"}
             )
             data = response.json()
+            response.raise_for_status()
             message = data['contents']['quotes'][0]['quote']
-        except requests.exceptions.RequestException as err:
+        except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
             logging.error(err)
             FONT_SIZE = 25
             message = "Sorry folks, today's quote has gone walkies :("

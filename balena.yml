@@ -22,7 +22,7 @@ assets:
 data:
   applicationEnvironmentVariables:
     - ALTERNATE_FREQUENCY: 30
-    - FONT: SourceSansPro
+    - FONT: HankenGrotesk
     - FONT_SIZE: 
     - MODE: alternate
     - QOD_CATEGORY: inspire
