@@ -7,6 +7,7 @@ from os import environ
 import sys
 import textwrap
 import time
+import datetime
 
 from font_amatic_sc import AmaticSC
 from font_caladea import Caladea
@@ -333,23 +334,28 @@ if target_display == 'weather':
     else:
         target_display = 'quote'
 elif target_display == 'quote':
+    # get day of year to ensure we retreiving quote only once per day
+    DOJ = datetime.datetime.now().strftime("%j")
+    logging.info("Day of Year: %s", DOJ)
     # Use a dashboard defined message if we have one, otherwise load a nice quote
     message = os.environ['INKY_MESSAGE'] if 'INKY_MESSAGE' in os.environ else None
-    # If message was set but blank, use the device name
-    if message == "":
-        message = os.environ['DEVICE_NAME']
-    elif message is None:
+    if (message is None OR message == "") AND (not 'DOJ' in os.environ OR os.environ['DOJ'] != DOJ):
         try:
             response = requests.get(
                 f"https://quotes.rest/qod?category={CATEGORY}&language={LANGUAGE}",
                 headers={"Accept" : "application/json"}
             )
             data = response.json()
+            response.raise_for_status()
             message = data['contents']['quotes'][0]['quote']
-        except requests.exceptions.RequestException as err:
+            os.environ['QODTODAY'] = message
+            os.environ['DOJ'] = DOJ
+        except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
             logging.error(err)
             FONT_SIZE = 25
-            message = "Sorry folks, today's quote has gone walkies :("
+            message = os.environ['QODTODAY'] if 'QODTODAY' in os.environ else message = "Sorry folks, today's quote has gone walkies :("
+    else:
+        message = os.environ['QODTODAY'] if 'QODTODAY' in os.environ else message = "Sorry folks, today's quote has gone walkies :("
 
     logging.info("Message: %s", message)
     # Work out what size font is required to fit this message on the display
