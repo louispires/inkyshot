@@ -26,7 +26,7 @@ data:
     - FONT_SIZE: 
     - MODE: alternate
     - QOD_CATEGORY: inspire
-    - TEST_CHARACTER: a
+    - TEST_CHARACTER: s
     - TZ: Africa/Johannesburg
     - UPDATE_HOUR: 6
     - WAVESHARE: 1
