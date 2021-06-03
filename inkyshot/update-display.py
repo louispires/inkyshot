@@ -16,7 +16,7 @@ from font_intuitive import Intuitive
 from font_roboto import Roboto
 from font_source_sans_pro import SourceSansPro
 from font_source_serif_pro import SourceSerifPro
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageFont, ImageDraw, ImageOps
 import arrow
 import geocoder
 import requests
@@ -116,9 +116,17 @@ def draw_weather(weather, img, scale):
     logging.info("filepath: %s", filepath)
     icon_image = Image.open(filepath)
     icon_mask = create_mask(icon_image)
-    #icon_mask = transBg(icon_image)
+
     # Draw the weather icon
-    img.paste(icon_image, (120, 3), icon_mask)
+    if WEATHER_INVERT:
+        icon = Image.new('1', (100, 100), 255)
+        icon.paste(icon_image, (0,0), icon_mask)
+        icon_inverted = ImageOps.invert(icon.convert('RGB'))
+        img = Image.new('1', (240, 137), 255)
+        img.paste(icon_inverted, (120, 3))
+    else:
+        img.paste(icon_image, (120, 3), icon_mask)
+    
     return img
 
 def get_current_display():
@@ -256,6 +264,8 @@ WEATHER_FONT = FredokaOne
 if "WEATHER_FONT" in os.environ:
     WEATHER_FONT = locals()[os.environ["WEATHER_FONT"]]
 
+WEATHER_INVERT = True if "WEATHER_INVERT" in os.environ else False
+
 [LAT, LONG] = [float(x) for x in os.environ["LATLONG"].split(",")] if "LATLONG" in os.environ else [None, None]
 
 # Temperature scale
@@ -285,8 +295,8 @@ if "WAVESHARE" in os.environ:
     # These are the opposite of what InkyPhat uses.
     WIDTH = epd.height # yes, Height
     HEIGHT = epd.width # yes, width
-    BLACK = 0
-    WHITE = 1
+    BLACK = 1
+    WHITE = 0
     img = Image.new('1', (WIDTH, HEIGHT), 255)
 else:
     import inky
