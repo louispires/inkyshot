@@ -7,8 +7,6 @@ from os import environ
 import sys
 import textwrap
 import time
-import cv2
-import numpy as np
 
 from font_amatic_sc import AmaticSC
 from font_caladea import Caladea
@@ -80,27 +78,6 @@ def create_mask(source):
                 mask_image.putpixel((x, y), 255)
     return mask_image
 
-def transBg(img):
-    """Create a transparency mask to draw images in grayscale
-    """
-    logging.info("Creating a transparency mask for the image - cv2")
-
-    ray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    th, threshed = cv2.threshold(gray, 240, 255, cv2.THRESH_BINARY_INV)
-
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (11,11))
-    morphed = cv2.morphologyEx(threshed, cv2.MORPH_CLOSE, kernel)
-
-    roi, _ = cv2.findContours(morphed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    mask = np.zeros(img.shape, img.dtype)
-
-    cv2.fillPoly(mask, roi, (255,)*img.shape[2], )
-
-    masked_image = cv2.bitwise_and(img, mask)
-
-    return masked_image
-
 # Declare non pip fonts here ** Note: ttf files need to be in the /fonts dir of application repo
 Grand9KPixel = "/usr/app/fonts/Grand9KPixel.ttf"
 
@@ -138,8 +115,8 @@ def draw_weather(weather, img, scale):
     filepath = Path(__file__).parent / 'weather-icons' / icon_filename
     logging.info("filepath: %s", filepath)
     icon_image = Image.open(filepath)
-    #icon_mask = create_mask(icon_image)
-    icon_mask = transBg(icon_image)
+    icon_mask = create_mask(icon_image)
+    #icon_mask = transBg(icon_image)
     # Draw the weather icon
     img.paste(icon_image, (120, 3), icon_mask)
     return img
