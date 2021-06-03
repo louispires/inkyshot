@@ -295,8 +295,8 @@ if "WAVESHARE" in os.environ:
     # These are the opposite of what InkyPhat uses.
     WIDTH = epd.height # yes, Height
     HEIGHT = epd.width # yes, width
-    BLACK = 1
-    WHITE = 0
+    BLACK = 0
+    WHITE = 1
     img = Image.new('1', (WIDTH, HEIGHT), 255)
 else:
     import inky
