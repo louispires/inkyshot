@@ -282,8 +282,8 @@ if "WAVESHARE" in os.environ:
     epd.init(epd.FULL_UPDATE)
     epd.Clear(0xFF)
     # These are the opposite of what InkyPhat uses.
-    WIDTH = display.height # yes, Height
-    HEIGHT = display.width # yes, width
+    WIDTH = epd.height # yes, Height
+    HEIGHT = epd.width # yes, width
     BLACK = "black"
     WHITE = "white"
     img = Image.new('1', (WIDTH, HEIGHT), 255)
