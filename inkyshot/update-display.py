@@ -16,7 +16,7 @@ from font_intuitive import Intuitive
 from font_roboto import Roboto
 from font_source_sans_pro import SourceSansPro
 from font_source_serif_pro import SourceSerifPro
-from PIL import Image, ImageFont, ImageDraw, ImageOps
+from PIL import Image, ImageFont, ImageDraw
 import arrow
 import geocoder
 import requests
@@ -113,20 +113,10 @@ def draw_weather(weather, img, scale):
             time_of_day = 'n'
     icon_filename = f"{icon_map[icon_name]:02}{time_of_day}.png"
     filepath = Path(__file__).parent / 'weather-icons' / icon_filename
-    logging.info("filepath: %s", filepath)
     icon_image = Image.open(filepath)
     icon_mask = create_mask(icon_image)
-
     # Draw the weather icon
-    if WEATHER_INVERT:
-        logging.info("Inverting Weather Icon")
-        icon = Image.new('1', (100, 100), 255)
-        icon.paste(icon_image, (0,0), icon_mask)
-        icon_inverted = ImageOps.invert(icon.convert('RGB'))
-        img.paste(icon_inverted, (120, 3))
-    else:
-        img.paste(icon_image, (120, 3), icon_mask)
-    
+    img.paste(icon_image, (120, 3), icon_mask)
     return img
 
 def get_current_display():
@@ -264,8 +254,6 @@ WEATHER_FONT = FredokaOne
 if "WEATHER_FONT" in os.environ:
     WEATHER_FONT = locals()[os.environ["WEATHER_FONT"]]
 
-WEATHER_INVERT = True if "WEATHER_INVERT" in os.environ else False
-
 [LAT, LONG] = [float(x) for x in os.environ["LATLONG"].split(",")] if "LATLONG" in os.environ else [None, None]
 
 # Temperature scale
@@ -289,12 +277,12 @@ if "WAVESHARE" in os.environ:
     logging.info("Display type: Waveshare")
 
     import lib.epd2in13_V2
-    epd = lib.epd2in13_V2.EPD()
-    epd.init(epd.FULL_UPDATE)
-    epd.Clear(0xFF)
+    display = lib.epd2in13_V2.EPD()
+    display.init(display.FULL_UPDATE)
+    display.Clear(0xFF)
     # These are the opposite of what InkyPhat uses.
-    WIDTH = epd.height # yes, Height
-    HEIGHT = epd.width # yes, width
+    WIDTH = display.height # yes, Height
+    HEIGHT = display.width # yes, width
     BLACK = 0
     WHITE = 1
     img = Image.new('1', (WIDTH, HEIGHT), 255)
@@ -357,9 +345,8 @@ elif target_display == 'quote':
                 headers={"Accept" : "application/json"}
             )
             data = response.json()
-            response.raise_for_status()
             message = data['contents']['quotes'][0]['quote']
-        except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
+        except requests.exceptions.RequestException as err:
             logging.error(err)
             FONT_SIZE = 25
             message = "Sorry folks, today's quote has gone walkies :("
@@ -419,7 +406,7 @@ if "ROTATE" in os.environ:
 
 if "WAVESHARE" in os.environ:
     # epd does not have a set_image method.
-    epd.display(epd.getbuffer(img))
+    display.display(display.getbuffer(img))
 else:
     display.set_image(img)
     display.show()
