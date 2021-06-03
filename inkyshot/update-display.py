@@ -123,7 +123,6 @@ def draw_weather(weather, img, scale):
         icon = Image.new('1', (100, 100), 255)
         icon.paste(icon_image, (0,0), icon_mask)
         icon_inverted = ImageOps.invert(icon.convert('RGB'))
-        img = Image.new('1', (240, 137), 255)
         img.paste(icon_inverted, (120, 3))
     else:
         img.paste(icon_image, (120, 3), icon_mask)
