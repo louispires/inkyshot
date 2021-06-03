@@ -87,20 +87,20 @@ def draw_weather(weather, img, scale):
     # Draw today's date on left side below today's name
     today = arrow.utcnow().format(fmt="DD MMMM", locale=LOCALE)
     date_font = ImageFont.truetype(WEATHER_FONT, 18)
-    draw.text((3, 3), today, BLACK, font=date_font)
+    draw.text((3, 3), today, WHITE, font=date_font)
     # Draw current temperature to right of today
     temp_font = ImageFont.truetype(WEATHER_FONT, 24)
-    draw.text((3, 30), f"{temp_to_str(weather['temperature'], scale)}°", BLACK, font=temp_font)
+    draw.text((3, 30), f"{temp_to_str(weather['temperature'], scale)}°", WHITE, font=temp_font)
     # Draw today's high and low temps on left side below date
     small_font = ImageFont.truetype(WEATHER_FONT, 14)
     draw.text(
         (3, 72),
         f"{temp_to_str(weather['min_temp'], scale)}° - {temp_to_str(weather['max_temp'], scale)}°",
-        BLACK,
+        WHITE,
         font=small_font,
     )
     # Draw today's max humidity on left side below temperatures
-    draw.text((3, 87), f"{weather['max_humidity']}%", BLACK, font=small_font)
+    draw.text((3, 87), f"{weather['max_humidity']}%", WHITE, font=small_font)
     # Load weather icon
     icon_name = weather['symbol'].split('_')[0]
     time_of_day = ''
