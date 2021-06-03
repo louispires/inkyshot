@@ -113,10 +113,11 @@ def draw_weather(weather, img, scale):
             time_of_day = 'n'
     icon_filename = f"{icon_map[icon_name]:02}{time_of_day}.png"
     filepath = Path(__file__).parent / 'weather-icons' / icon_filename
+    logging.info("filepath: %s", filepath)
     icon_image = Image.open(filepath)
     icon_mask = create_mask(icon_image)
     # Draw the weather icon
-    img.paste(icon_image, (120, 3), icon_mask)
+    img.paste(icon_image, (120, 3))
     return img
 
 def get_current_display():
@@ -277,9 +278,9 @@ if "WAVESHARE" in os.environ:
     logging.info("Display type: Waveshare")
 
     import lib.epd2in13_V2
-    display = lib.epd2in13_V2.EPD()
-    display.init(display.FULL_UPDATE)
-    display.Clear(0xFF)
+    epd = lib.epd2in13_V2.EPD()
+    epd.init(epd.FULL_UPDATE)
+    epd.Clear(0xFF)
     # These are the opposite of what InkyPhat uses.
     WIDTH = display.height # yes, Height
     HEIGHT = display.width # yes, width
@@ -407,7 +408,7 @@ if "ROTATE" in os.environ:
 
 if "WAVESHARE" in os.environ:
     # epd does not have a set_image method.
-    display.display(display.getbuffer(img))
+    epd.display(epd.getbuffer(img))
 else:
     display.set_image(img)
     display.show()
