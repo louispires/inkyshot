@@ -4,7 +4,6 @@ WORKDIR /usr/app
 COPY pip.conf /etc/
 
 RUN apt-get update && apt-get install -y\
-  install_packages \
   cron \
   libatlas3-base \
   libgfortran3 \
