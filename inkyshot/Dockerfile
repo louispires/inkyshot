@@ -1,4 +1,4 @@
-FROM balenalib/raspberry-pi-debian-python:3.9-buster-run
+FROM balenalib/raspberry-pi-debian-python:3.7-buster-run
 
 WORKDIR /usr/app
 COPY pip.conf /etc/
