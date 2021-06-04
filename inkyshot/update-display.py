@@ -90,20 +90,20 @@ def draw_weather(weather, img, scale):
     logging.info("utc: %s", arrow.utcnow())
     logging.info("now: %s", arrow.utcnow().to(TIMEZONE))
     date_font = ImageFont.truetype(WEATHER_FONT, 18)
-    draw.text((9, 3), today, BLACK, font=date_font)
+    draw.text((18, 3), today, BLACK, font=date_font)
     # Draw current temperature to right of today
-    temp_font = ImageFont.truetype(WEATHER_FONT, 24)
-    draw.text((9, 30), f"{temp_to_str(weather['temperature'], scale)}°", BLACK, font=temp_font)
+    temp_font = ImageFont.truetype(WEATHER_FONT, 36)
+    draw.text((18, 24), f"{temp_to_str(weather['temperature'], scale)}°", BLACK, font=temp_font)
     # Draw today's high and low temps on left side below date
-    small_font = ImageFont.truetype(WEATHER_FONT, 14)
+    small_font = ImageFont.truetype(WEATHER_FONT, 16)
     draw.text(
-        (9, 72),
+        (18, 72),
         f"{temp_to_str(weather['min_temp'], scale)}° - {temp_to_str(weather['max_temp'], scale)}°",
         BLACK,
         font=small_font,
     )
     # Draw today's max humidity on left side below temperatures
-    draw.text((9, 87), f"{weather['max_humidity']}%", BLACK, font=small_font)
+    draw.text((18, 87), f"{weather['max_humidity']}%", BLACK, font=small_font)
     # Load weather icon
     icon_name = weather['symbol'].split('_')[0]
     time_of_day = ''
