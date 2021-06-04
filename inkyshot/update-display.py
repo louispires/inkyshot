@@ -385,9 +385,9 @@ elif target_display == 'quote':
         message_width = 0
         FONT_SIZE -= 1
 
-        if FONT_SIZE <= 17:
-            FONT_SIZE = 8
-            FONT = ImageFont.truetype("/usr/app/fonts/Grand9KPixel.ttf", FONT_SIZE)
+        #if FONT_SIZE <= 17:
+        #    FONT_SIZE = 8
+        #    FONT = ImageFont.truetype("/usr/app/fonts/Grand9KPixel.ttf", FONT_SIZE)
 
         # We're using the test character here to work out how many characters
         # can fit on the display when using the chosen font
