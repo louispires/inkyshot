@@ -252,7 +252,7 @@ FONT_SELECTED = AmaticSC
 if "FONT" in os.environ:
     FONT_SELECTED = locals()[os.environ["FONT"]]
 
-FONT_SIZE = 24
+FONT_SIZE = 28
 if "FONT_SIZE" in os.environ:
     FONT_SIZE = int(os.environ["FONT_SIZE"])
 
@@ -369,7 +369,7 @@ elif target_display == 'quote':
             message = data['contents']['quotes'][0]['quote']
         except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
             logging.error(err)
-            FONT_SIZE = 25
+            FONT_SIZE = 28
             message = "Sorry folks, today's quote has gone walkies :("
 
     logging.info("Message: %s", message)
@@ -383,11 +383,10 @@ elif target_display == 'quote':
     while message_does_not_fit == True:
         test_message = ""
         message_width = 0
-        FONT_SIZE -= 1
         FONT = ImageFont.truetype(FONT_SELECTED, FONT_SIZE)
 
-        if FONT_SIZE <= 9:
-            FONT_SIZE = 8
+        if FONT_SIZE <= 12:
+            FONT_SIZE = 10
             FONT = ImageFont.truetype("/usr/app/fonts/Grand9KPixel.ttf", FONT_SIZE)
 
         # We're using the test character here to work out how many characters
@@ -406,8 +405,11 @@ elif target_display == 'quote':
         if len(word_list) <= max_lines:
             message_does_not_fit = False
 
-        if FONT_SIZE < 9:
+        if FONT_SIZE <= 10:
             message_does_not_fit = False
+
+        if message_does_not_fit:
+            FONT_SIZE -= 1
 
     logging.info("Font size: %s", FONT_SIZE)
     offset_x, offset_y = FONT.getoffset(message)
