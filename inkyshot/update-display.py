@@ -85,7 +85,10 @@ def draw_weather(weather, img, scale):
     """Draw the weather info on screen"""
     logging.info("Prepare the weather data for drawing")
     # Draw today's date on left side below today's name
-    today = arrow.utcnow().format(fmt="DD MMMM", locale=LOCALE)
+    logging.info("Timezone: %s", TIMEZONE)
+    today = arrow.utcnow().to(TIMEZONE).format(fmt="DD MMMM", locale=LOCALE)
+    logging.info("utc: %s", arrow.utcnow())
+    logging.info("now: %s", arrow.utcnow().to(TIMEZONE))
     date_font = ImageFont.truetype(WEATHER_FONT, 18)
     draw.text((3, 3), today, BLACK, font=date_font)
     # Draw current temperature to right of today
@@ -238,6 +241,11 @@ if "DEBUG" in os.environ:
     logging.basicConfig(level=logging.DEBUG)
 else:
     logging.basicConfig(level=logging.INFO)
+
+# Retrieve set Timezone
+TIMEZONE = "Africa/Johannesburg"
+if "TZ" in os.environ:
+    TIMEZONE = os.environ['TZ']
 
 # Assume a default font if none set
 FONT_SELECTED = AmaticSC
