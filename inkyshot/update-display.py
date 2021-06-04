@@ -90,20 +90,20 @@ def draw_weather(weather, img, scale):
     logging.info("utc: %s", arrow.utcnow())
     logging.info("now: %s", arrow.utcnow().to(TIMEZONE))
     date_font = ImageFont.truetype(WEATHER_FONT, 18)
-    draw.text((3, 3), today, BLACK, font=date_font)
+    draw.text((9, 3), today, BLACK, font=date_font)
     # Draw current temperature to right of today
     temp_font = ImageFont.truetype(WEATHER_FONT, 24)
-    draw.text((3, 30), f"{temp_to_str(weather['temperature'], scale)}°", BLACK, font=temp_font)
+    draw.text((9, 30), f"{temp_to_str(weather['temperature'], scale)}°", BLACK, font=temp_font)
     # Draw today's high and low temps on left side below date
     small_font = ImageFont.truetype(WEATHER_FONT, 14)
     draw.text(
-        (3, 72),
+        (9, 72),
         f"{temp_to_str(weather['min_temp'], scale)}° - {temp_to_str(weather['max_temp'], scale)}°",
         BLACK,
         font=small_font,
     )
     # Draw today's max humidity on left side below temperatures
-    draw.text((3, 87), f"{weather['max_humidity']}%", BLACK, font=small_font)
+    draw.text((9, 87), f"{weather['max_humidity']}%", BLACK, font=small_font)
     # Load weather icon
     icon_name = weather['symbol'].split('_')[0]
     time_of_day = ''
@@ -126,9 +126,9 @@ def draw_weather(weather, img, scale):
         icon = Image.new('1', (100, 100), 255)
         icon.paste(icon_image, (0,0), icon_mask)
         icon_inverted = ImageOps.invert(icon.convert('RGB'))
-        img.paste(icon_inverted, (120, 3))
+        img.paste(icon_inverted, (125, 3))
     else:
-        img.paste(icon_image, (120, 3), icon_mask)
+        img.paste(icon_image, (125, 3), icon_mask)
     
     return img
 
