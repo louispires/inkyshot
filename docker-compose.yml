@@ -9,7 +9,6 @@ services:
       io.balena.features.balena-api: '1'
       io.balena.features.supervisor-api: '1'
     environment: 
-      - ALTERNATE_FREQUENCY=30
       - FONT=FredokaOne
       - MODE=alternate
       - QOD_CATEGORY=love
