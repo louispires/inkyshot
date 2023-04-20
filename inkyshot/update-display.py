@@ -364,13 +364,9 @@ elif target_display == 'quote':
         message = os.environ['DEVICE_NAME']
     elif message is None:
         try:
-            response = requests.get(
-                f"https://quotes.rest/qod?category={CATEGORY}&language={LANGUAGE}",
-                headers={
-                    "Accept" : "application/json", 
-                    "X-TheySaidSo_Api_Secret" : f"{TheySaidSo_Api_Secret}"
-                }
-            )
+            headers = {"Accept": "application/json", "X-TheySaidSo-Api-Secret": f"{TheySaidSo_Api_Secret}"}
+            # logging.info("headers: %s", headers)
+            response = requests.get(f"https://quotes.rest/qod?category={CATEGORY}&language={LANGUAGE}", headers = headers)
             data = response.json()
             response.raise_for_status()
             message = data['contents']['quotes'][0]['quote']
