@@ -377,7 +377,7 @@ elif target_display == 'quote':
         except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
             logging.error(err)
             FONT_SIZE = 28
-            message = "Sorry folks, today's quote has gone walkies :("
+            message = "Sorry baba, today's quote has gone walkies :("
 
     logging.info("Message: %s", message)
     # Work out what size font is required to fit this message on the display
