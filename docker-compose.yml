@@ -19,6 +19,7 @@ services:
       - WAVESHARE=1
       - WEATHER_INVERT
       - WEATHER_LOCATION
+      - TheySaidSo-Api-Secret
       #- INKY_MESSAGE=
   wifi-connect:
     build:
