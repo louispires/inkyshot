@@ -261,6 +261,10 @@ CATEGORY = "inspire"
 if "QOD_CATEGORY" in os.environ:
     CATEGORY = os.environ['QOD_CATEGORY']
 
+# Check for theysaidso API key
+if "QOD_CATEGORY" in os.environ:
+    TheySaidSo-Api-Secret = os.environ['TheySaidSo-Api-Secret']
+
 # Check for a quote of the day language. ** Note: Only English is supported currently. **
 LANGUAGE = "en"
 if "QOD_LANGUAGE" in os.environ:
@@ -362,7 +366,10 @@ elif target_display == 'quote':
         try:
             response = requests.get(
                 f"https://quotes.rest/qod?category={CATEGORY}&language={LANGUAGE}",
-                headers={"Accept" : "application/json"}
+                headers={
+                    "Accept" : "application/json", 
+                    "X-TheySaidSo-Api-Secret" : f"{TheySaidSo-Api-Secret}"
+                }
             )
             data = response.json()
             response.raise_for_status()
