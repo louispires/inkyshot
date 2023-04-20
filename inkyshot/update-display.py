@@ -262,7 +262,7 @@ if "QOD_CATEGORY" in os.environ:
     CATEGORY = os.environ['QOD_CATEGORY']
 
 # Check for theysaidso API key
-if "QOD_CATEGORY" in os.environ:
+if "TheySaidSo-Api-Secret" in os.environ:
     TheySaidSo-Api-Secret = os.environ['TheySaidSo-Api-Secret']
 
 # Check for a quote of the day language. ** Note: Only English is supported currently. **
