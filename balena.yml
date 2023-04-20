@@ -30,7 +30,7 @@ data:
     - UPDATE_HOUR: 6
     - WAVESHARE: 1
     - WEATHER_LOCATION: 
-    - TheySaidSo-Api-Secret: 
+    - TheySaidSo_Api_Secret: 
   defaultDeviceType: raspberry-pi
   supportedDeviceTypes:
     - raspberry-pi

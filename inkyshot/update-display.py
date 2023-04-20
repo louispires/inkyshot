@@ -262,8 +262,8 @@ if "QOD_CATEGORY" in os.environ:
     CATEGORY = os.environ['QOD_CATEGORY']
 
 # Check for theysaidso API key
-if "TheySaidSo-Api-Secret" in os.environ:
-    TheySaidSo-Api-Secret = os.environ['TheySaidSo-Api-Secret']
+if "TheySaidSo_Api_Secret" in os.environ:
+    TheySaidSo_Api_Secret = os.environ['TheySaidSo_Api_Secret']
 
 # Check for a quote of the day language. ** Note: Only English is supported currently. **
 LANGUAGE = "en"
@@ -368,7 +368,7 @@ elif target_display == 'quote':
                 f"https://quotes.rest/qod?category={CATEGORY}&language={LANGUAGE}",
                 headers={
                     "Accept" : "application/json", 
-                    "X-TheySaidSo-Api-Secret" : f"{TheySaidSo-Api-Secret}"
+                    "X-TheySaidSo_Api_Secret" : f"{TheySaidSo_Api_Secret}"
                 }
             )
             data = response.json()
