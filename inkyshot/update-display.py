@@ -366,7 +366,7 @@ elif target_display == 'quote':
         try:
             headers = {"Accept": "application/json", "X-TheySaidSo-Api-Secret": f"{TheySaidSo_Api_Secret}"}
             # logging.info("headers: %s", headers)
-            response = requests.get(f"https://quotes.rest/qod?category={CATEGORY}&language={LANGUAGE}", headers = headers)
+            response = requests.get(f"https://quotes.rest/qod?category={CATEGORY}", headers = headers)
             data = response.json()
             response.raise_for_status()
             message = data['contents']['quotes'][0]['quote']
