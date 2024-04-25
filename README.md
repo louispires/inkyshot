@@ -1,12 +1,12 @@
 # Inkyshot - a shot of inspiration to start the day
 
-![](https://raw.githubusercontent.com/balenalabs-incubator/inkyshot/master/assets/header-photo.jpg)
+![](https://raw.githubusercontent.com/balena-labs-projects/inkyshot/master/assets/header-photo.jpg)
 
 **Get a daily random inspirational quote delivered direct to your desk with Inkyshot. Build multiple Inkyshots and share the inspiration with your friends, family and loved ones ❤️**
 
 ## Hardware required
 
-![](https://raw.githubusercontent.com/balenalabs-incubator/inkyshot/master/assets/hardware-photo.jpg)
+![](https://raw.githubusercontent.com/balena-labs-projects/inkyshot/master/assets/hardware-photo.jpg)
 
 - Raspberry Pi (tested with Zero and 3B so far)
 - [Pimoroni InkyPHAT display](https://shop.pimoroni.com/products/inky-phat?variant=12549254938707)
@@ -19,7 +19,7 @@
 
 Running this project is as simple as deploying it to a balenaCloud application. You can do it in just one click by using the button below:
 
-[![](https://balena.io/deploy.png)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/balenalabs/inkyshot)
+[![](https://balena.io/deploy.png)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/balena-labs-projects/inkyshot)
 
 You can also deploy in the traditional manner using the balena CLI and `balena push` command. For more information [check out the docs](https://www.balena.io/docs/learn/deploy/deployment/).
 
@@ -34,6 +34,8 @@ Inkyshot wants to deliver a shot of inspiration to start your day, and by defaul
 ### Timezone
 
 In order for the update time to work correctly, you'll of course have to tell Inkyshot what timezone you'd like to use. Set the `TZ` environment variable to any [IANA timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. `Europe/London`, `America/Los_Angeles`, `Asia/Taipei` etc.
+
+This timezone is also used for displaying the correct date when the environment variable `MODE` is set to `weather`.
 
 ### Message override
 
@@ -69,14 +71,19 @@ Set `SCALE` environment variable to `F` to display the temperature values in Fah
 
 Use the `WEATHER_FONT` variable to customize the font used in weather display mode.
 
+Use the `WEATHER_INVERT` variable to invert the Image being displayed - `WAVESHARE` specific.
+
 `LOCALE` variable allows to display the date of temperature reading in any language supported by [the date library](https://arrow.readthedocs.io/en/latest/#module-arrow.locales).
 
 Finally, you can set the environment variable `MODE` to `alternate` for Inkyshot to rotate between `quote` and `weather` modes.
 You can put number of minutes in the `ALTERNATE_FREQUENCY` environment variable in order to configure Inkyshot to update periodically.
 By default, the first display is quote mode and you can instead chose weather by setting `current_display` tag to `weather` on the device.
 
+### Hostname
 
-### Wifi Connect
+By default the device will be assigned the hostname `inkyshot` so it can be easily found on a network. This can be changed with the `SET_HOSTNAME` environment variable.
+
+## Wifi Connect
 
 As from v1.2.0 this project includes [wifi-connect](https://github.com/balena-io/wifi-connect) which is a utility for dynamically setting the WiFi configuration on a Linux device via a captive portal. If your device is not connected to the internet, an access point will be created. You can refer to the docs [here](https://github.com/balenablocks/wifi-connect#customisation) for customizing the different settings for wifi-connect.
 
@@ -84,15 +91,15 @@ As from v1.2.0 this project includes [wifi-connect](https://github.com/balena-io
 
 STL files are included within the assets folder of the project for you to 3D print your own case.
 
-![](https://raw.githubusercontent.com/balenalabs-incubator/inkyshot/master/assets/inky-print.png)
+![](https://raw.githubusercontent.com/balena-labs-projects/inkyshot/master/assets/inky-print.png)
 
 The case has two positions for a captive M3 nut, and can be fastened together with two countersunk 8mm M3 machine screws. If you're using design 2, the screws you'll need are something [like this](https://www.accu.co.uk/en/self-tapping-raised-torx-screws/21738-SHRKT-No-2-1-2-A2).
 
 A position is open in the rear of the case for the use of a [micro USB PCB socket](https://www.aliexpress.com/item/4000484202812.html), allowing for direct connection of power to the back of a Raspberry Pi Zero.
 
-![](https://raw.githubusercontent.com/balenalabs-incubator/inkyshot/master/assets/inky-rear.png)
+![](https://raw.githubusercontent.com/balena-labs-projects/inkyshot/master/assets/inky-rear.png)
 
-### Contributing & Commit structure
+## Contributing & Commit structure
 
 _When submitting a pull request, please use the guidance outlined below._
 

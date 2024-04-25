@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Get the current device name
 export DEVICE_NAME=$(curl -sX GET "https://api.balena-cloud.com/v5/device?\$filter=uuid%20eq%20'$BALENA_DEVICE_UUID'" \
 -H "Content-Type: application/json" \

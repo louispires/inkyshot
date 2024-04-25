@@ -121,15 +121,14 @@ def draw_weather(weather, img, scale):
     icon_mask = create_mask(icon_image)
 
     # Draw the weather icon
-    if WEATHER_INVERT:
+    if WEATHER_INVERT and WAVESHARE:
         logging.info("Inverting Weather Icon")
         icon = Image.new('1', (100, 100), 255)
         icon.paste(icon_image, (0,0), icon_mask)
         icon_inverted = ImageOps.invert(icon.convert('RGB'))
-        img.paste(icon_inverted, (125, 3))
+        img.paste(icon_inverted, (120, 3))
     else:
-        img.paste(icon_image, (125, 3), icon_mask)
-    
+        img.paste(icon_image, (120, 3), icon_mask)
     return img
 
 def get_current_display():
@@ -295,9 +294,11 @@ BALENA_DEVICE_UUID = os.environ["BALENA_DEVICE_UUID"]
 BALENA_SUPERVISOR_ADDRESS = os.environ["BALENA_SUPERVISOR_ADDRESS"]
 BALENA_SUPERVISOR_API_KEY = os.environ["BALENA_SUPERVISOR_API_KEY"]
 
+WAVESHARE = True if "WAVESHARE" in os.environ else False
+
 # Init the display. TODO: support other colours
 logging.debug("Init and Clear")
-if "WAVESHARE" in os.environ:
+if WAVESHARE:
     logging.info("Display type: Waveshare")
 
     import lib.epd2in13_V2
@@ -305,8 +306,8 @@ if "WAVESHARE" in os.environ:
     epd.init(epd.FULL_UPDATE)
     epd.Clear(0xFF)
     # These are the opposite of what InkyPhat uses.
-    WIDTH = epd.height # yes, Height
-    HEIGHT = epd.width # yes, width
+    WIDTH = display.height # yes, Height
+    HEIGHT = display.width # yes, width
     BLACK = 0
     WHITE = 1
     img = Image.new('1', (WIDTH, HEIGHT), 255)
@@ -431,7 +432,7 @@ elif target_display == 'quote':
 if "ROTATE" in os.environ:
     img = img.rotate(180)
 
-if "WAVESHARE" in os.environ:
+if WAVESHARE:
     # epd does not have a set_image method.
     epd.display(epd.getbuffer(img))
 else:
