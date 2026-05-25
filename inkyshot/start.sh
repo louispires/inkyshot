@@ -7,7 +7,7 @@ export DEVICE_NAME=$(curl -sX GET "https://api.balena-cloud.com/v5/device?\$filt
 jq -r ".d | .[0] | .device_name")
 
 # Run the display update once on container start
-python /usr/app/update-display.py
+python3 /usr/app/update-display.py
 
 # Save out the current env to a file so cron job can use it
 export -p > /usr/app/env.sh

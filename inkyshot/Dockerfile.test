@@ -1,0 +1,25 @@
+FROM python:3.11-slim-bookworm
+
+WORKDIR /usr/app
+
+RUN pip install --no-cache-dir \
+    requests \
+    arrow \
+    Pillow \
+    font-amatic-sc \
+    font-caladea \
+    font-fredoka-one \
+    font-hanken-grotesk \
+    font-intuitive \
+    font-roboto \
+    font-source-sans-pro \
+    font-source-serif-pro \
+    geocoder \
+    python-dateutil
+
+COPY fonts fonts
+COPY weather-icons weather-icons
+COPY lib lib
+COPY update-display.py .
+
+CMD ["python3", "update-display.py"]

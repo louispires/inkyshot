@@ -4,4 +4,4 @@
 . /usr/app/env.sh
 
 # Run the Inky update
-python /usr/app/update-display.py
+python3 /usr/app/update-display.py

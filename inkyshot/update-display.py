@@ -131,6 +131,38 @@ def draw_weather(weather, img, scale):
         img.paste(icon_image, (120, 3), icon_mask)
     return img
 
+QUOTES_CACHE_FILE = Path("/data/quotes_cache.json")
+
+def load_quote_cache():
+    try:
+        if QUOTES_CACHE_FILE.exists():
+            return json.loads(QUOTES_CACHE_FILE.read_text())
+    except Exception as e:
+        logging.error("Failed to load quote cache: %s", e)
+    return {"quotes": [], "index": 0}
+
+def save_quote_cache(cache):
+    try:
+        QUOTES_CACHE_FILE.write_text(json.dumps(cache))
+    except Exception as e:
+        logging.error("Failed to save quote cache: %s", e)
+
+def fetch_quotes(n=20):
+    quotes = []
+    try:
+        for _ in range(n):
+            response = requests.get(
+                "https://api.quotable.kurokeita.dev/api/quotes/random",
+                headers={"Accept": "application/json"},
+                timeout=10,
+            )
+            response.raise_for_status()
+            data = response.json()
+            quotes.append(data['quote']['content'])
+    except Exception as e:
+        logging.error("Failed to fetch quotes: %s", e)
+    return quotes
+
 def get_current_display():
     """Query device supervisor API to retrieve the current display"""
     url = f"{BALENA_SUPERVISOR_ADDRESS}/v2/device/tags?apikey={BALENA_SUPERVISOR_API_KEY}"
@@ -251,23 +283,10 @@ FONT_SELECTED = AmaticSC
 if "FONT" in os.environ:
     FONT_SELECTED = locals()[os.environ["FONT"]]
 
-FONT_SIZE = 28
+FONT_SIZE = 20
 if "FONT_SIZE" in os.environ:
     FONT_SIZE = int(os.environ["FONT_SIZE"])
 
-# Check for a quote of the day category, otherwise use inspire
-CATEGORY = "inspire"
-if "QOD_CATEGORY" in os.environ:
-    CATEGORY = os.environ['QOD_CATEGORY']
-
-# Check for theysaidso API key
-if "TheySaidSo_Api_Secret" in os.environ:
-    TheySaidSo_Api_Secret = os.environ['TheySaidSo_Api_Secret']
-
-# Check for a quote of the day language. ** Note: Only English is supported currently. **
-LANGUAGE = "en"
-if "QOD_LANGUAGE" in os.environ:
-    LANGUAGE = os.environ['QOD_LANGUAGE']
 
 FONT = ImageFont.truetype(FONT_SELECTED, FONT_SIZE)
 
@@ -288,17 +307,32 @@ LOCALE = os.environ["LOCALE"] if "LOCALE" in os.environ else 'en'
 # Display mode of Inkyshot
 MODE = os.environ["MODE"] if "MODE" in os.environ else 'quote'
 
+TEST_MODE = "TEST_MODE" in os.environ
+
 # Read balena variables for balena API calls
-BALENA_API_KEY = os.environ["BALENA_API_KEY"]
-BALENA_DEVICE_UUID = os.environ["BALENA_DEVICE_UUID"]
-BALENA_SUPERVISOR_ADDRESS = os.environ["BALENA_SUPERVISOR_ADDRESS"]
-BALENA_SUPERVISOR_API_KEY = os.environ["BALENA_SUPERVISOR_API_KEY"]
+if TEST_MODE:
+    BALENA_API_KEY = os.environ.get("BALENA_API_KEY", "test")
+    BALENA_DEVICE_UUID = os.environ.get("BALENA_DEVICE_UUID", "test-device")
+    BALENA_SUPERVISOR_ADDRESS = os.environ.get("BALENA_SUPERVISOR_ADDRESS", "http://localhost")
+    BALENA_SUPERVISOR_API_KEY = os.environ.get("BALENA_SUPERVISOR_API_KEY", "test")
+else:
+    BALENA_API_KEY = os.environ["BALENA_API_KEY"]
+    BALENA_DEVICE_UUID = os.environ["BALENA_DEVICE_UUID"]
+    BALENA_SUPERVISOR_ADDRESS = os.environ["BALENA_SUPERVISOR_ADDRESS"]
+    BALENA_SUPERVISOR_API_KEY = os.environ["BALENA_SUPERVISOR_API_KEY"]
 
 WAVESHARE = True if "WAVESHARE" in os.environ else False
 
 # Init the display. TODO: support other colours
 logging.debug("Init and Clear")
-if WAVESHARE:
+if TEST_MODE:
+    logging.info("Display type: TEST_MODE (no hardware)")
+    WIDTH = 212
+    HEIGHT = 104
+    BLACK = 0
+    WHITE = 255
+    img = Image.new('RGB', (WIDTH, HEIGHT), WHITE)
+elif WAVESHARE:
     logging.info("Display type: Waveshare")
 
     import lib.epd2in13_V2
@@ -306,8 +340,8 @@ if WAVESHARE:
     epd.init(epd.FULL_UPDATE)
     epd.Clear(0xFF)
     # These are the opposite of what InkyPhat uses.
-    WIDTH = display.height # yes, Height
-    HEIGHT = display.width # yes, width
+    WIDTH = epd.height # yes, Height
+    HEIGHT = epd.width # yes, width
     BLACK = 0
     WHITE = 1
     img = Image.new('1', (WIDTH, HEIGHT), 255)
@@ -364,16 +398,19 @@ elif target_display == 'quote':
     if message == "":
         message = os.environ['DEVICE_NAME']
     elif message is None:
-        try:
-            headers = {"Accept": "application/json", "X-TheySaidSo-Api-Secret": f"{TheySaidSo_Api_Secret}"}
-            # logging.info("headers: %s", headers)
-            response = requests.get(f"https://quotes.rest/qod?category={CATEGORY}", headers = headers)
-            data = response.json()
-            response.raise_for_status()
-            message = data['contents']['quotes'][0]['quote']
-        except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
-            logging.error(err)
-            FONT_SIZE = 28
+        cache = load_quote_cache()
+        if len(cache['quotes']) == 0 or cache['index'] >= 10:
+            new_quotes = fetch_quotes(20)
+            if new_quotes:
+                cache = {"quotes": new_quotes, "index": 0}
+                save_quote_cache(cache)
+        if len(cache['quotes']) > 0:
+            idx = cache['index'] % len(cache['quotes'])
+            message = cache['quotes'][idx]
+            cache['index'] += 1
+            save_quote_cache(cache)
+        else:
+            FONT_SIZE = 20
             message = "Sorry baba, today's quote has gone walkies :("
 
     logging.info("Message: %s", message)
@@ -384,7 +421,7 @@ elif target_display == 'quote':
     if "TEST_CHARACTER" in os.environ:
         test_character = os.environ['TEST_CHARACTER']
 
-    while message_does_not_fit == True:
+    while message_does_not_fit:
         test_message = ""
         message_width = 0
         FONT = ImageFont.truetype(FONT_SELECTED, FONT_SIZE)
@@ -397,7 +434,9 @@ elif target_display == 'quote':
         # can fit on the display when using the chosen font
         while message_width < WIDTH:
             test_message += test_character
-            message_width, message_height = draw.textsize(test_message, font=FONT)
+            bbox = draw.textbbox((0, 0), test_message, font=FONT)
+            message_width = bbox[2] - bbox[0]
+            message_height = bbox[3] - bbox[1]
 
         max_width = len(test_message)
         max_lines = math.floor(HEIGHT/message_height)
@@ -416,13 +455,16 @@ elif target_display == 'quote':
             FONT_SIZE -= 1
 
     logging.info("Font size: %s", FONT_SIZE)
-    offset_x, offset_y = FONT.getoffset(message)
+    offset_bbox = FONT.getbbox(message)
+    offset_x, offset_y = offset_bbox[0], offset_bbox[1]
 
     # Rejoin the wrapped lines with newline chars
     separator = '\n'
     output_text = separator.join(word_list)
 
-    w, h = draw.multiline_textsize(output_text, font=FONT, spacing=0)
+    mt_bbox = draw.multiline_textbbox((0, 0), output_text, font=FONT, spacing=0)
+    w = mt_bbox[2] - mt_bbox[0]
+    h = mt_bbox[3] - mt_bbox[1]
 
     x = (WIDTH - w)/2
     y = (HEIGHT - h - offset_y)/2
@@ -432,7 +474,11 @@ elif target_display == 'quote':
 if "ROTATE" in os.environ:
     img = img.rotate(180)
 
-if WAVESHARE:
+if TEST_MODE:
+    out = Path("/data/test_output.png")
+    img.save(out)
+    logging.info("TEST_MODE: saved render to %s", out)
+elif WAVESHARE:
     # epd does not have a set_image method.
     epd.display(epd.getbuffer(img))
 else:
@@ -442,7 +488,7 @@ else:
 logging.info("Done drawing")
 
 # Update device with the current display for ALTERNATE mode
-if MODE == 'alternate':
+if MODE == 'alternate' and not TEST_MODE:
     set_current_display(target_display)
 
 sys.exit(0)

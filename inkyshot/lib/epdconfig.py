@@ -146,7 +146,17 @@ class JetsonNano:
         self.GPIO.cleanup()
 
 
-if os.path.exists('/sys/bus/platform/drivers/gpiomem-bcm2835'):
+def _is_raspberry_pi():
+    for path in ['/proc/device-tree/model', '/sys/firmware/devicetree/base/model']:
+        try:
+            with open(path, 'r') as f:
+                if 'Raspberry Pi' in f.read():
+                    return True
+        except Exception:
+            pass
+    return os.path.exists('/sys/bus/platform/drivers/gpiomem-bcm2835')
+
+if _is_raspberry_pi():
     implementation = RaspberryPi()
 else:
     implementation = JetsonNano()
