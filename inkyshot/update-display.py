@@ -151,14 +151,17 @@ def save_quote_cache(cache):
     except Exception as e:
         logging.error("Failed to save quote cache: %s", e)
 
-QUOTE_MAX_LENGTH = 150
+QUOTE_MAX_LENGTH = 120
+
+_VALID_QUOTE_LIMITS = (10, 25, 50, 100)
 
 def fetch_quotes(n):
-    """Fetch up to n random quotes in a single API call."""
+    """Fetch at least n random quotes in a single API call."""
+    limit = next((v for v in _VALID_QUOTE_LIMITS if v >= n), _VALID_QUOTE_LIMITS[-1])
     try:
         response = requests.get(
             "https://api.quotable.kurokeita.dev/api/quotes/random",
-            params={"limit": n, "maxLength": QUOTE_MAX_LENGTH},
+            params={"limit": limit, "maxLength": QUOTE_MAX_LENGTH},
             headers={"Accept": "application/json"},
             timeout=30,
         )
@@ -173,7 +176,7 @@ def fetch_quotes(n):
         else:
             items = []
         quotes = [q["content"].strip() for q in items if q.get("content", "").strip()]
-        logging.info("Fetched %d of %d requested quotes", len(quotes), n)
+        logging.info("Fetched %d quotes (requested %d, API limit %d)", len(quotes), n, limit)
         return quotes
     except requests.exceptions.ConnectionError:
         logging.warning("No internet, could not fetch quotes")
