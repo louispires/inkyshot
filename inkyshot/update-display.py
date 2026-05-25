@@ -132,36 +132,54 @@ def draw_weather(weather, img, scale):
     return img
 
 QUOTES_CACHE_FILE = Path("/data/quotes_cache.json")
+MIN_CACHE_QUOTES = 30
 
 def load_quote_cache():
     try:
         if QUOTES_CACHE_FILE.exists():
-            return json.loads(QUOTES_CACHE_FILE.read_text())
+            data = json.loads(QUOTES_CACHE_FILE.read_text())
+            if isinstance(data, dict) and "quotes" in data:
+                return data
     except Exception as e:
         logging.error("Failed to load quote cache: %s", e)
     return {"quotes": [], "index": 0}
 
 def save_quote_cache(cache):
     try:
+        QUOTES_CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
         QUOTES_CACHE_FILE.write_text(json.dumps(cache))
     except Exception as e:
         logging.error("Failed to save quote cache: %s", e)
 
-def fetch_quotes(n=20):
-    quotes = []
+QUOTE_MAX_LENGTH = 150
+
+def fetch_quotes(n):
+    """Fetch up to n random quotes in a single API call."""
     try:
-        for _ in range(n):
-            response = requests.get(
-                "https://api.quotable.kurokeita.dev/api/quotes/random",
-                headers={"Accept": "application/json"},
-                timeout=10,
-            )
-            response.raise_for_status()
-            data = response.json()
-            quotes.append(data['quote']['content'])
+        response = requests.get(
+            "https://api.quotable.kurokeita.dev/api/quotes/random",
+            params={"limit": n, "maxLength": QUOTE_MAX_LENGTH},
+            headers={"Accept": "application/json"},
+            timeout=30,
+        )
+        response.raise_for_status()
+        data = response.json()
+        if isinstance(data, list):
+            items = data
+        elif "quotes" in data:
+            items = data["quotes"]
+        elif "quote" in data:
+            items = [data["quote"]]
+        else:
+            items = []
+        quotes = [q["content"].strip() for q in items if q.get("content", "").strip()]
+        logging.info("Fetched %d of %d requested quotes", len(quotes), n)
+        return quotes
+    except requests.exceptions.ConnectionError:
+        logging.warning("No internet, could not fetch quotes")
     except Exception as e:
-        logging.error("Failed to fetch quotes: %s", e)
-    return quotes
+        logging.warning("Quote fetch failed: %s", e)
+    return []
 
 def get_current_display():
     """Query device supervisor API to retrieve the current display"""
@@ -399,19 +417,37 @@ elif target_display == 'quote':
         message = os.environ['DEVICE_NAME']
     elif message is None:
         cache = load_quote_cache()
-        if len(cache['quotes']) == 0 or cache['index'] >= 10:
-            new_quotes = fetch_quotes(20)
+        quotes = cache.get("quotes", [])
+        index = cache.get("index", 0)
+
+        # Wrap index back to start when all quotes have been cycled through
+        if index >= len(quotes):
+            logging.info("End of quote cycle (%d shown), wrapping to start", index)
+            index = 0
+
+        # Top up cache whenever fewer than MIN_CACHE_QUOTES remain unseen
+        remaining = len(quotes) - index
+        if remaining < MIN_CACHE_QUOTES:
+            needed = MIN_CACHE_QUOTES - remaining
+            logging.info("Topping up cache: fetching %d quotes (%d remaining)", needed, remaining)
+            new_quotes = fetch_quotes(needed)
             if new_quotes:
-                cache = {"quotes": new_quotes, "index": 0}
-                save_quote_cache(cache)
-        if len(cache['quotes']) > 0:
-            idx = cache['index'] % len(cache['quotes'])
-            message = cache['quotes'][idx]
-            cache['index'] += 1
-            save_quote_cache(cache)
-        else:
+                quotes.extend(new_quotes)
+                logging.info("Cache extended to %d quotes (%d remaining)", len(quotes), len(quotes) - index)
+
+        # Trim consumed quotes when list grows large (keeps JSON file small)
+        if index > 0 and len(quotes) > MIN_CACHE_QUOTES * 3 and index >= len(quotes) // 2:
+            logging.info("Trimming %d consumed quotes from cache", index)
+            quotes = quotes[index:]
+            index = 0
+
+        if not quotes:
             FONT_SIZE = 20
             message = "Sorry baba, today's quote has gone walkies :("
+        else:
+            message = quotes[index]
+            cache = {"quotes": quotes, "index": index + 1}
+            save_quote_cache(cache)
 
     logging.info("Message: %s", message)
     # Work out what size font is required to fit this message on the display
