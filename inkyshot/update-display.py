@@ -132,7 +132,7 @@ def draw_weather(weather, img, scale):
     return img
 
 QUOTES_CACHE_FILE = Path("/data/quotes_cache.json")
-MIN_CACHE_QUOTES = 30
+MIN_CACHE_QUOTES = 25
 
 def load_quote_cache():
     try:
@@ -153,7 +153,7 @@ def save_quote_cache(cache):
 
 QUOTE_MAX_LENGTH = 120
 
-_VALID_QUOTE_LIMITS = (10, 25, 50, 100)
+_VALID_QUOTE_LIMITS = (25, 50, 100)
 
 def fetch_quotes(n):
     """Fetch at least n random quotes in a single API call."""
