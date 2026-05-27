@@ -139,6 +139,12 @@ def load_quote_cache():
         if QUOTES_CACHE_FILE.exists():
             data = json.loads(QUOTES_CACHE_FILE.read_text())
             if isinstance(data, dict) and "quotes" in data:
+                original = data["quotes"]
+                filtered = [q for q in original if len(q) <= QUOTE_MAX_LENGTH]
+                if len(filtered) < len(original):
+                    logging.info("Filtered %d over-length quotes from cache", len(original) - len(filtered))
+                    data["quotes"] = filtered
+                    data["index"] = min(data.get("index", 0), len(filtered))
                 return data
     except Exception as e:
         logging.error("Failed to load quote cache: %s", e)
@@ -506,7 +512,7 @@ elif target_display == 'quote':
     h = mt_bbox[3] - mt_bbox[1]
 
     x = (WIDTH - w)/2
-    y = (HEIGHT - h - offset_y)/2
+    y = max(0, (HEIGHT - h - offset_y)/2)
     draw.multiline_text((x, y), output_text, BLACK, FONT, align="center", spacing=0)
 
 # Rotate and display the image
