@@ -157,7 +157,7 @@ def save_quote_cache(cache):
     except Exception as e:
         logging.error("Failed to save quote cache: %s", e)
 
-QUOTE_MAX_LENGTH = 150
+QUOTE_MAX_LENGTH = 200
 
 _VALID_QUOTE_LIMITS = (25, 50, 100)
 
@@ -310,7 +310,7 @@ FONT_SELECTED = AmaticSC
 if "FONT" in os.environ:
     FONT_SELECTED = locals()[os.environ["FONT"]]
 
-FONT_SIZE = 20
+FONT_SIZE = 28
 if "FONT_SIZE" in os.environ:
     FONT_SIZE = int(os.environ["FONT_SIZE"])
 
@@ -451,7 +451,7 @@ elif target_display == 'quote':
             index = 0
 
         if not quotes:
-            FONT_SIZE = 20
+            FONT_SIZE = 28
             message = "Sorry baba, today's quote has gone walkies :("
         else:
             message = quotes[index]
@@ -480,10 +480,14 @@ elif target_display == 'quote':
             test_message += test_character
             bbox = draw.textbbox((0, 0), test_message, font=FONT)
             message_width = bbox[2] - bbox[0]
-            message_height = bbox[3] - bbox[1]
 
         max_width = len(test_message)
-        max_lines = math.floor(HEIGHT/message_height)
+
+        # Use font metrics for line height so tall glyphs (capitals, ascenders)
+        # are accounted for, not just the short test character 'a'
+        ascent, descent = FONT.getmetrics()
+        message_height = ascent + descent
+        max_lines = math.floor(HEIGHT / message_height)
 
         # We wrap the message to the width we worked out earlier
         wrapper = textwrap.TextWrapper(width=max_width)
