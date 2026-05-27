@@ -157,7 +157,7 @@ def save_quote_cache(cache):
     except Exception as e:
         logging.error("Failed to save quote cache: %s", e)
 
-QUOTE_MAX_LENGTH = 120
+QUOTE_MAX_LENGTH = 150
 
 _VALID_QUOTE_LIMITS = (25, 50, 100)
 
@@ -469,11 +469,10 @@ elif target_display == 'quote':
     while message_does_not_fit:
         test_message = ""
         message_width = 0
-        FONT = ImageFont.truetype(FONT_SELECTED, FONT_SIZE)
-
         if FONT_SIZE <= 12:
-            FONT_SIZE = 10
             FONT = ImageFont.truetype("/usr/app/fonts/Grand9KPixel.ttf", FONT_SIZE)
+        else:
+            FONT = ImageFont.truetype(FONT_SELECTED, FONT_SIZE)
 
         # We're using the test character here to work out how many characters
         # can fit on the display when using the chosen font
@@ -493,7 +492,7 @@ elif target_display == 'quote':
         if len(word_list) <= max_lines:
             message_does_not_fit = False
 
-        if FONT_SIZE <= 10:
+        if FONT_SIZE <= 8:
             message_does_not_fit = False
 
         if message_does_not_fit:
